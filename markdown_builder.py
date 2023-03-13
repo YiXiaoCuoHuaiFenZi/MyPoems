@@ -76,8 +76,19 @@ def write_poem(poem, previous_poem, next_poem):
         f.write(create_markdown(poem, previous_poem, next_poem))
 
 
+def create_content_list_page(poems):
+    file_path = os.path.join(markdowns_dir, "目录.md")
+    lines = ["# 砂砾\n\n", "一小撮坏分子\n\n"]
+    for poem in poems:
+        lines.append(f"[{poem.title}]({poem.id}.md)\\\n")
+
+    with open(file_path, "w") as f:
+        f.writelines(lines)
+
+
 def create_pages():
     poems = load_poems_as_obj("poems_1.json")
+    create_content_list_page(poems)
     poems.insert(0, None)
     poems.append(None)
     poem_amount = len(poems)
