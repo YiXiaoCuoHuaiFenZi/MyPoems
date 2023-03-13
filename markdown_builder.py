@@ -42,7 +42,7 @@ def update_poems_ids(file_path):
 
 
 def create_markdown(poem, previous_poem, next_poem):
-    content = "\\\n".join(poem.content)
+    content = "\\\n".join(poem.content) + "\n"
     if previous_poem and next_poem:
         return f"# {poem.title}\n" \
                f"{poem.author}\n\n" \
