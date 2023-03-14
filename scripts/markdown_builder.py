@@ -1,10 +1,13 @@
 import os
 import uuid
 import json
+from pathlib import Path
 
 curr_dir = os.path.dirname(os.path.realpath(__file__))
-poem_data_dir = os.path.join(curr_dir, "poem_data")
-markdowns_dir = os.path.join(curr_dir, "markdowns")
+parent_path = Path(curr_dir).parent.absolute()
+
+poem_data_dir = os.path.join(parent_path, "poem_data")
+markdowns_dir = os.path.join(parent_path, "markdowns")
 
 
 class Poem:
@@ -32,7 +35,7 @@ def load_poems_as_obj(file_path):
     return poem_list
 
 
-def update_poems_ids(file_path):
+def reset_poems_ids(file_path):
     poems = load_poems(file_path)
     for poem in poems:
         poem["id"] = uuid.uuid4().hex
@@ -77,10 +80,12 @@ def write_poem(poem, previous_poem, next_poem):
 
 
 def create_content_list_page(poems):
-    file_path = os.path.join(markdowns_dir, "目录.md")
+    file_path = os.path.join(parent_path, "目录.md")
     lines = ["# 砂砾\n\n", "一小撮坏分子\n\n"]
     for poem in poems:
-        lines.append(f"[{poem.title}]({poem.id}.md)\\\n")
+        lines.append(f"[{poem.title}](markdowns/{poem.id}.md)\\\n")
+
+    lines[-1] = lines[-1].rstrip("\\\n")  # 删除最后面的斜线和换行符
 
     with open(file_path, "w") as f:
         f.writelines(lines)
@@ -93,9 +98,10 @@ def create_pages():
     poems.append(None)
     poem_amount = len(poems)
     for i in range(poem_amount):
-        if 2 < i < poem_amount - 1:
+        if 1 <= i < poem_amount - 1:
             write_poem(poems[i], poems[i - 1], poems[i + 1])
 
 
-# update_poems_ids("poems_1.json")
-create_pages()
+if __name__ == "__main__":
+    # reset_poems_ids("poems_1.json")
+    create_pages()
